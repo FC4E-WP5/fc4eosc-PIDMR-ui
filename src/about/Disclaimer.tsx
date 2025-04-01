@@ -14,7 +14,6 @@ function Disclaimer() {
             the PID Metaresolver (PIDMR) websites and the services
             provided through PID Metaresolver sites.
           </p>
-        </h2>
         <Row>
           <h5>Use of the websites</h5>
           <p>
