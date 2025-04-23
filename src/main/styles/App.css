@@ -38,6 +38,22 @@ footer a {
   margin: 5px;
 }
 
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon.clickable {
+  cursor: pointer;
+}
+
+.icon-placeholder {
+  display: block;
+  background-color: #f0f0f0;
+  border-radius: 16px;
+}
+
 .info {
   min-height: 4rem;
   padding: 5px;
@@ -178,6 +194,7 @@ footer a {
   padding: 0;
   padding-bottom: 0;
   overflow: hidden;
+  text-decoration: none;
 }
 
 .providers-box-container .headerblock {
@@ -188,12 +205,8 @@ footer a {
   overflow: hidden;
 }
 
-.providers-box-container .headerblock .spacer {
-  margin-right: 12px;
-}
-
 .providers-box-container .headerblock .imgblock {
-  display: inline-block;
+  margin-right: 12px;
 }
 
 .providers-box-container .headerblock .imgblock img {

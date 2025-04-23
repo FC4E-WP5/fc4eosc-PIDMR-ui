@@ -75,3 +75,13 @@ export interface UserList {
   surname: string;
   email: string;
 }
+
+export interface PaginationProps {
+  isClientSide: boolean;
+  currentPage: number;
+  pageSize: number;
+  data: ApiResponse | null;
+  totalItems: number;
+  totalPages: number;
+  searchTerm: string;
+}
