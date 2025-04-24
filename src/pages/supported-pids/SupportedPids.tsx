@@ -249,13 +249,16 @@ function SupportedPids() {
 
   // Filter and paginate providers based on search term
   const filteredProviders = useMemo(() => {
-    if (!allProviders?.length) return [];
-
+    if (!allProviders?.length || !searchTerm) return [];
+    const lowercaseSearchTerm = searchTerm?.toLowerCase();
     return allProviders.filter((provider) => {
-      const searchLower = searchTerm?.toLowerCase();
+      const { name, description, type, examples } = provider || {};
+
       return (
-        provider?.name.toLowerCase().includes(searchLower) ||
-        provider?.type.toLowerCase().includes(searchLower)
+        name?.toLowerCase()?.includes(lowercaseSearchTerm) ||
+        description?.toLowerCase()?.includes(lowercaseSearchTerm) ||
+        examples?.[0]?.toLowerCase()?.includes(lowercaseSearchTerm) ||
+        type?.toLowerCase()?.includes(lowercaseSearchTerm)
       );
     });
   }, [allProviders, searchTerm]);
