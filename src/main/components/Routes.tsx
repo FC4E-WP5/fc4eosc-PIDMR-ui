@@ -16,6 +16,7 @@ import UsersTable from "../../pages/user-role/UsersTable";
 import UserRoleRequests from "../../pages/user-role/UserRoleRequests";
 import SupportedPids from "../../pages/supported-pids/SupportedPids";
 import PidDetail from "../../pages/supported-pids/PidDetail";
+import NotFound from "../../pages/not-found/NotFound";
 
 const Routes = () => {
   return (
@@ -76,6 +77,7 @@ const Routes = () => {
         <Route index element={<UsersTable />} />
       </Route>
       <Route path={ROUTES.LOGOUT} element={<KeycloakLogout />} />
+      <Route path="*" element={<NotFound />} />
     </RoutesComponent>
   );
 };
