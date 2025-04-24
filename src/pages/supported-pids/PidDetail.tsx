@@ -12,6 +12,7 @@ const PROVIDER_API_ROUTE = `${PIDMR_API}/v1/providers`;
 function PidDetail() {
   const { id } = useParams();
   const [provider, setProvider] = useState<Provider | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,14 +21,30 @@ function PidDetail() {
         setLoading(true);
         const response = await fetch(`${PROVIDER_API_ROUTE}/${id}`);
 
+        if (response.status === 404) {
+          const errorData = await response.json();
+          setErrorMessage(errorData?.message);
+          setProvider(null);
+          return;
+        }
+
         if (!response.ok) {
-          throw new Error("PID not found");
+          const errorData = await response.json();
+          setErrorMessage(
+            errorData?.message ||
+              `Error ${response.status}: ${response.statusText}`,
+          );
+          setProvider(null);
+          return;
         }
 
         const data = await response.json();
         setProvider(data);
-      } catch (err) {
-        console.error(err);
+      } catch (err: unknown) {
+        const error = err as Error;
+        const errorMessage = error?.message || "An unexpected error occurred";
+        console.error(errorMessage);
+        setErrorMessage(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -54,6 +71,8 @@ function PidDetail() {
         >
           <span className="visually-hidden">Loading...</span>
         </Spinner>
+      ) : provider == null ? (
+        <strong>{errorMessage}</strong>
       ) : (
         <div className="content">
           <div>
