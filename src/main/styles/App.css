@@ -319,7 +319,7 @@ footer a {
   width: 60%;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (width <= 768px) {
   .not-found-lady {
     width: 100px;
   }
