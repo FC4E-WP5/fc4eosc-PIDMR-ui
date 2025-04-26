@@ -294,16 +294,43 @@ footer a {
 
 .not-found-content {
   max-width: 34rem;
+  font-family: Graphik, sans-serif;
 }
 
 .not-found-content h1 {
   margin-bottom: 1rem;
-  font-size: 2.5rem;
+  font-size: 4rem;
   font-weight: 600;
 }
 
 .not-found-content p {
   margin-bottom: 1.5rem;
+  font-family: Graphik, sans-serif;
   font-size: 1.2rem;
   color: #6c757d;
+}
+
+.not-found-cloudsvg {
+  position: absolute;
+  top: 90px;
+  z-index: -1;
+  width: 100%;
+}
+
+.not-found-lady {
+  width: 60%;
+}
+
+@media (width <= 768px) {
+  .not-found-lady {
+    width: 100px;
+  }
+
+  .not-found-cloudsvg {
+    width: 1px;
+  }
+
+  .not-found-content h1 {
+    font-size: 2.3rem;
+  }
 }

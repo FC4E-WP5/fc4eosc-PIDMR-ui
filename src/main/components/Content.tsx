@@ -7,10 +7,7 @@ const Content = () => {
   return (
     <>
       <Header />
-      <Container
-        className="d-flex flex-column flex-grow-1"
-        style={{ width: "110vh" }}
-      >
+      <Container className="d-flex flex-column flex-grow-1">
         <Routes />
       </Container>
       <Footer />
