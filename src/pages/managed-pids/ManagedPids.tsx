@@ -6,6 +6,7 @@ import {
   FaCog,
   FaEdit,
   FaExclamationTriangle,
+  FaGlasses,
   FaIdCard,
   FaList,
   FaPlusCircle,
@@ -16,6 +17,7 @@ import { Alert, Button, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
 import DataTable, { TableColumn } from "react-data-table-component";
 import { DeleteModal } from "../../common/components/DeleteModal";
 import toast from "react-hot-toast";
+import Icon from "../../common/components/Icon";
 import { StatusModal } from "./StatusModal";
 
 // API endpoint declared in env variable
@@ -43,20 +45,46 @@ const tooltipDelete = <Tooltip id="tooltip">Delete PID</Tooltip>;
 const tooltipAPPROVE = <Tooltip id="tooltip">Change to Approved</Tooltip>;
 const tooltipPENDING = <Tooltip id="tooltip">Change to Pending</Tooltip>;
 
-const customStyles = {
+const customStyles = (isScreenSmall = false) => ({
   headCells: {
     style: {
       color: "#202124",
       fontSize: "16px",
       backgroundColor: "#F4F6F8",
+      paddingLeft: isScreenSmall ? "6px" : "16px",
+      paddingRight: isScreenSmall ? "6px" : "16px",
+      paddingTop: isScreenSmall ? "6px" : "12px",
+      paddingBottom: isScreenSmall ? "6px" : "12px",
     },
   },
-  rows: {
+  cells: {
     style: {
-      fontSize: "14px",
+      paddingLeft: isScreenSmall ? "6px" : "16px",
+      paddingRight: isScreenSmall ? "6px" : "16px",
+      paddingTop: isScreenSmall ? "6px" : "12px",
+      paddingBottom: isScreenSmall ? "6px" : "12px",
     },
   },
+});
+
+// Create a mapping from provider types to their respective logo files
+const LOGO_MAPPING: Record<string, string> = {
+  ARK: "logoARK.png",
+  ARXIV: "logoARXIV.png",
+  DOI: "logoDOI.png",
+  EPICOLD: "logoEPIC.png",
+  "URN:NBN:DE": "logoNBNDE.png",
+  "URN:NBN:FI": "logoNBNFI.png",
+  "10.5281/ZENODO": "logoZenodo.svg",
+  DEFAULT: "logoSWH.png",
 };
+
+const getProviderLogo = (type: string): string => {
+  const upperType = type.replace(/\s/g, "").toUpperCase();
+  return LOGO_MAPPING[upperType] || LOGO_MAPPING.DEFAULT;
+};
+
+const SMALL_SCREEN_BREAKPOINT = 991;
 
 const ManagedPids = () => {
   const { roles, userid } = useContext(AuthContext)!;
@@ -69,6 +97,17 @@ const ManagedPids = () => {
   const [filterStatus, setFilterStatus] = useState("");
 
   const { keycloak } = useContext(AuthContext)!;
+
+  const [isScreenSmall, setIsScreenSmall] = useState(
+    window.innerWidth < SMALL_SCREEN_BREAKPOINT,
+  );
+
+  useEffect(() => {
+    const handleResize = () =>
+      setIsScreenSmall(window.innerWidth < SMALL_SCREEN_BREAKPOINT);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const [deleteModalConfig, setDeleteModalConfig] = useState<DeleteModalConfig>(
     {
@@ -225,7 +264,11 @@ const ManagedPids = () => {
     return (
       <>
         {row.resolution_modes.map((mode) => (
-          <span className="badge badge-small bg-secondary mx-1" key={mode.mode}>
+          <span
+            className="badge badge-small bg-secondary m-1"
+            key={mode.mode}
+            style={{ fontSize: "0.7rem" }}
+          >
             {mode.name}
           </span>
         ))}
@@ -239,42 +282,80 @@ const ManagedPids = () => {
       selector: (row) => row.name,
       sortable: true,
       cell: (row) => (
-        <>
-          <span
-            style={{ color: "black", border: "1px black solid" }}
-            className="badge badge-small bg-warning"
-          >
-            {row.type}
-          </span>
-          <strong style={{ marginLeft: "0.6rem" }}>{row.name}</strong>
-        </>
-      ),
-      wrap: true,
-      width: "300px",
-    },
-    {
-      name: "Description",
-      selector: (row) => row.description,
-      cell: (row) => (
-        <div className="m-1">
-          {row.description.length > 100
-            ? row.description.substring(0, 100) + "..."
-            : row.description}
+        <div className="d-flex align-items-center gap-2">
+          <Icon
+            fileName={getProviderLogo(row.type)}
+            height="28px"
+            width="28px"
+          />
+          <strong>{row.name}</strong>
         </div>
       ),
       wrap: true,
-      width: "500px",
+      grow: 2,
+      minWidth: "100px",
+      maxWidth: "320px",
     },
+    ...(!isScreenSmall
+      ? [
+          {
+            name: "Description",
+            selector: (row: Provider) => row.description,
+            cell: (row: Provider) => {
+              const shortDesc =
+                row.description.length > 150
+                  ? row.description.substring(0, 150) + "..."
+                  : row.description;
+
+              return (
+                <div className="m-1" title={row.description}>
+                  {shortDesc}
+                </div>
+              );
+            },
+            wrap: true,
+            grow: 2,
+            minWidth: "180px",
+            maxWidth: "500px",
+          },
+        ]
+      : []),
     {
       name: "Modes",
-      cell: (row) => <div className="m-2">{createBadges(row)}</div>,
+      cell: (row) => <div>{createBadges(row)}</div>,
       wrap: true,
+      grow: 1,
+      minWidth: "100px",
+      maxWidth: "240px",
     },
     {
       name: "Status",
       selector: (row) => row.status || "",
-      cell: (row) => <div className="m-1">{row.status}</div>,
+      cell: (row) => (
+        <span style={{ fontSize: "1rem" }}>
+          {row.status === "APPROVED" ? (
+            <span className="badge bg-success-pidmir">
+              <FaCheck /> Approved
+            </span>
+          ) : (
+            <span className="badge bg-primary-pidmir">
+              <FaGlasses /> Pending
+            </span>
+          )}
+        </span>
+      ),
+      conditionalCellStyles: [
+        {
+          when: () => isScreenSmall,
+          style: {
+            margin: "auto 16px",
+          },
+        },
+      ],
       sortable: true,
+      grow: 1,
+      minWidth: "80px",
+      maxWidth: "240px",
     },
     {
       name: "Actions",
@@ -327,13 +408,9 @@ const ManagedPids = () => {
           </OverlayTrigger>
         </div>
       ),
+      minWidth: "140px",
     },
   ];
-
-  const handleClear = () => {
-    setFilterText("");
-    setFilterStatus("");
-  };
 
   const filteredData = data.filter((request) => {
     const matchesText =
@@ -388,7 +465,7 @@ const ManagedPids = () => {
             </option>
           </Form.Select>
         </div>
-        <div className="col-7">
+        <div className="col-6">
           <Form.Control
             id="searchField"
             name="filterText"
@@ -399,39 +476,32 @@ const ManagedPids = () => {
             onChange={(e) => setFilterText(e.target.value)}
           />
         </div>
-        <div className="col-1">
-          <Button
-            variant="outline-primary"
-            id="button-addon2"
-            onClick={handleClear}
-          >
-            Clear
-          </Button>
-        </div>
       </div>
 
-      {data && data.length > 0 ? (
-        <DataTable
-          columns={columns}
-          data={filteredData}
-          defaultSortFieldId={4}
-          defaultSortAsc={false}
-          theme="default"
-          customStyles={customStyles}
-          pagination
-        />
-      ) : (
-        <Alert variant="info">
-          <div className="d-flex align-items-center">
-            <FaExclamationTriangle size={40} />
-            <div className="ms-3">
-              <strong>No types!</strong>
-              <br />
-              It seems there are no PID types yet.
+      <div className="mb-5">
+        {data && data.length > 0 ? (
+          <DataTable
+            columns={columns}
+            data={filteredData}
+            defaultSortFieldId={4}
+            defaultSortAsc={false}
+            theme="default"
+            customStyles={customStyles(isScreenSmall)}
+            pagination
+          />
+        ) : (
+          <Alert variant="info">
+            <div className="d-flex align-items-center">
+              <FaExclamationTriangle size={40} />
+              <div className="ms-3">
+                <strong>No types!</strong>
+                <br />
+                It seems there are no PID types yet.
+              </div>
             </div>
-          </div>
-        </Alert>
-      )}
+          </Alert>
+        )}
+      </div>
 
       <DeleteModal
         show={deleteModalConfig.show}
