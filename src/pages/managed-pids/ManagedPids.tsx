@@ -7,7 +7,6 @@ import {
   FaEdit,
   FaExclamationTriangle,
   FaGlasses,
-  FaIdCard,
   FaList,
   FaPlusCircle,
   FaTrashAlt,
@@ -17,6 +16,7 @@ import { Alert, Button, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
 import DataTable, { TableColumn } from "react-data-table-component";
 import { DeleteModal } from "../../common/components/DeleteModal";
 import toast from "react-hot-toast";
+import AdminLayout from "../../common/components/AdminLayout";
 import Icon from "../../common/components/Icon";
 import { StatusModal } from "./StatusModal";
 
@@ -59,8 +59,8 @@ const customStyles = (isScreenSmall = false) => ({
   },
   cells: {
     style: {
-      paddingLeft: isScreenSmall ? "6px" : "16px",
-      paddingRight: isScreenSmall ? "6px" : "16px",
+      paddingLeft: isScreenSmall ? "2px" : "16px",
+      paddingRight: isScreenSmall ? "2px" : "16px",
       paddingTop: isScreenSmall ? "6px" : "12px",
       paddingBottom: isScreenSmall ? "6px" : "12px",
     },
@@ -87,7 +87,7 @@ const getProviderLogo = (type: string): string => {
 const SMALL_SCREEN_BREAKPOINT = 991;
 
 const ManagedPids = () => {
-  const { roles, userid } = useContext(AuthContext)!;
+  const { roles } = useContext(AuthContext)!;
   const admin = roles.includes("admin");
   const providerAdmin = roles.includes("provider_admin");
   const [data, setData] = useState<Provider[]>([]);
@@ -354,7 +354,7 @@ const ManagedPids = () => {
       ],
       sortable: true,
       grow: 1,
-      minWidth: "80px",
+      minWidth: "100px",
       maxWidth: "240px",
     },
     {
@@ -408,32 +408,26 @@ const ManagedPids = () => {
           </OverlayTrigger>
         </div>
       ),
-      minWidth: "140px",
+      minWidth: "150px",
     },
   ];
 
   const filteredData = data.filter((request) => {
     const matchesText =
-      (request.name &&
+      (request?.name &&
         request.name.toLowerCase().includes(filterText.toLowerCase())) ||
       (request.description &&
         request.description.toLowerCase().includes(filterText.toLowerCase()));
 
     const matchesType =
-      request.status &&
+      request?.status &&
       request.status.toLowerCase().includes(filterStatus.toLowerCase());
 
     return matchesText && matchesType;
   });
 
   return (
-    <>
-      <Alert variant="success" className="mt-2">
-        <FaIdCard size="1.6rem" className="me-2" /> You have logged in as{" "}
-        <strong>{userid}</strong> having the{" "}
-        {roles.length > 1 ? "roles" : "role"} of:{" "}
-        <strong>{roles.join(", ")}</strong>
-      </Alert>
+    <AdminLayout>
       <div className="d-flex justify-content-between">
         <div>
           <h5>Managed Pids:</h5>
@@ -532,7 +526,7 @@ const ManagedPids = () => {
           }
         }}
       />
-    </>
+    </AdminLayout>
   );
 };
 

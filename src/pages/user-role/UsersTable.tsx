@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import { FaUser, FaShieldAlt, FaRegCheckCircle } from "react-icons/fa";
-import { Button, Form } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { AuthContext } from "../../auth";
 import { UserList } from "../../types";
+import AdminLayout from "../../common/components/AdminLayout";
 
 const PIDMR_API = import.meta.env.VITE_PIDMR_API;
 const USERS_API_ROUTE = `${PIDMR_API}/v1/admin/users`;
@@ -147,11 +148,6 @@ const UsersTable: React.FC = () => {
     },
   ];
 
-  const handleClear = () => {
-    setFilterText("");
-    setFilterType("");
-  };
-
   const filteredRequests = requests.filter((request) => {
     const matchesText =
       (request.name &&
@@ -178,61 +174,52 @@ const UsersTable: React.FC = () => {
   });
 
   return (
-    <div className="mt-4 mb-4">
-      <h5>
-        <FaUser className="me-2" />
-        Users
-      </h5>
-
-      <div className="row mb-3 mt-3">
-        <div className="col-4">
-          <Form.Select
-            id="domainSelection"
-            name="formSelectDomain"
-            aria-label="Domain Selection"
-            onChange={(e) => setFilterType(e.target.value)}
-            value={filterType}
-          >
-            <option value="">Select Role</option>
-            <option key="admin" value="admin">
-              Admin
-            </option>
-            <option key="provider_admin" value="provider_admin">
-              Provider Admin
-            </option>
-          </Form.Select>
+    <AdminLayout>
+      <div className="mb-4">
+        <h5>
+          <FaUser className="me-2" />
+          Users
+        </h5>
+        <div className="row mb-3 mt-3">
+          <div className="col-4">
+            <Form.Select
+              id="domainSelection"
+              name="formSelectDomain"
+              aria-label="Domain Selection"
+              onChange={(e) => setFilterType(e.target.value)}
+              value={filterType}
+            >
+              <option value="">Select Role</option>
+              <option key="admin" value="admin">
+                Admin
+              </option>
+              <option key="provider_admin" value="provider_admin">
+                Provider Admin
+              </option>
+            </Form.Select>
+          </div>
+          <div className="col-6">
+            <Form.Control
+              id="searchField"
+              name="filterText"
+              aria-label="Input for searching the list"
+              placeholder="Search ..."
+              value={filterText}
+              aria-describedby="button-addon2"
+              onChange={(e) => setFilterText(e.target.value)}
+            />
+          </div>
         </div>
-        <div className="col-7">
-          <Form.Control
-            id="searchField"
-            name="filterText"
-            aria-label="Input for searching the list"
-            placeholder="Search ..."
-            value={filterText}
-            aria-describedby="button-addon2"
-            onChange={(e) => setFilterText(e.target.value)}
-          />
-        </div>
-        <div className="col-1">
-          <Button
-            variant="outline-primary"
-            id="button-addon2"
-            onClick={handleClear}
-          >
-            Clear
-          </Button>
-        </div>
+        <DataTable
+          columns={columns}
+          data={filteredRequests}
+          theme="default"
+          customStyles={customStyles}
+          pagination
+          defaultSortFieldId={1}
+        />
       </div>
-
-      <DataTable
-        columns={columns}
-        data={filteredRequests}
-        theme="default"
-        customStyles={customStyles}
-        pagination
-        defaultSortFieldId={1}
-      />
-    </div>
+    </AdminLayout>
   );
 };
 
