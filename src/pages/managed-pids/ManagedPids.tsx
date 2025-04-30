@@ -10,6 +10,7 @@ import {
   FaList,
   FaPlusCircle,
   FaTrashAlt,
+  FaUserCog,
 } from "react-icons/fa";
 import { ApiResponse, Provider } from "../../types";
 import { Alert, Button, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
@@ -428,9 +429,16 @@ const ManagedPids = () => {
 
   return (
     <AdminLayout>
-      <div className="d-flex justify-content-between">
+      <div className="d-flex justify-content-between mt-4">
         <div>
-          <h5>Managed Pids:</h5>
+          <h5>
+            <FaUserCog className="me-2 mb-1" size="24px" />
+            Managed Pids
+          </h5>
+          <p className="text-muted w-75 my-3">
+            Configure and maintain PID resolvers available in the system. Add
+            new providers, edit existing ones, or change their approval status.
+          </p>
         </div>
         {(admin || providerAdmin) && (
           <div className="mb-2">

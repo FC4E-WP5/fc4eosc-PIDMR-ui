@@ -65,14 +65,14 @@ const Routes = () => {
       </Route>
       <Route
         path={ROUTES.USER_ROLE.REQUESTS}
-        element={<ProtectedRoute routeRoles={["admin", "provider_admin"]} />}
+        element={<ProtectedRoute routeRoles={["admin"]} />}
       >
         <Route index element={<UserRoleRequests />} />
       </Route>
       <Route path={ROUTES.USER_ROLE.GUIDE} element={<UserRoleGuide />} />
       <Route
         path={ROUTES.USER_ROLE.USERS_TABLE}
-        element={<ProtectedRoute routeRoles={["admin", "provider_admin"]} />}
+        element={<ProtectedRoute routeRoles={["admin"]} />}
       >
         <Route index element={<UsersTable />} />
       </Route>

@@ -148,38 +148,45 @@ const UsersTable: React.FC = () => {
     },
   ];
 
-  const filteredRequests = requests.filter((request) => {
-    const matchesText =
-      (request.name &&
-        request.name.toLowerCase().includes(filterText.toLowerCase())) ||
-      (request.email &&
-        request.email.toLowerCase().includes(filterText.toLowerCase())) ||
-      (request.id &&
-        request.id.toLowerCase().includes(filterText.toLowerCase())) ||
-      (request.roles &&
-        request.roles
-          .toString()
-          .toLowerCase()
-          .includes(filterText.toLowerCase())) ||
-      (request.surname &&
-        request.surname.toLowerCase().includes(filterText.toLowerCase()));
+  const filteredRequests =
+    requests?.length > 0
+      ? requests.filter((request) => {
+          const matchesText =
+            (request.name &&
+              request.name.toLowerCase().includes(filterText.toLowerCase())) ||
+            (request.email &&
+              request.email.toLowerCase().includes(filterText.toLowerCase())) ||
+            (request.id &&
+              request.id.toLowerCase().includes(filterText.toLowerCase())) ||
+            (request.roles &&
+              request.roles
+                .toString()
+                .toLowerCase()
+                .includes(filterText.toLowerCase())) ||
+            (request.surname &&
+              request.surname.toLowerCase().includes(filterText.toLowerCase()));
 
-    const matchesType = filterType
-      ? request.roles.some(
-          (role) => role.toLowerCase() === filterType.toLowerCase(),
-        )
-      : true;
+          const matchesType = filterType
+            ? request.roles.some(
+                (role) => role.toLowerCase() === filterType.toLowerCase(),
+              )
+            : true;
 
-    return matchesText && matchesType;
-  });
+          return matchesText && matchesType;
+        })
+      : [];
 
   return (
     <AdminLayout>
-      <div className="mb-4">
+      <div className="my-4">
         <h5>
-          <FaUser className="me-2" />
+          <FaUser className="me-2 mb-1" />
           Users
         </h5>
+        <p className="text-muted w-75 my-3">
+          View and manage all registered users in the system. Filter users by
+          role type and search for specific users.
+        </p>
         <div className="row mb-3 mt-3">
           <div className="col-4">
             <Form.Select
