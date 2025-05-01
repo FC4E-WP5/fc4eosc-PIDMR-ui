@@ -250,11 +250,15 @@ const UserRoleRequests: React.FC = () => {
 
   return (
     <AdminLayout>
-      <div className="mb-4">
+      <div className="my-4">
         <h5>
-          <FaUsersCog className="me-2" />
+          <FaUsersCog className="me-2 mb-1" size="24px" />
           Role Change Requests
         </h5>
+        <p className="text-muted w-75 my-3">
+          Manage user permission requests. Review and approve or reject users
+          requesting provider administrator privileges.
+        </p>
         <div className="row mb-3 mt-3">
           <div className="col-4">
             <Form.Select
