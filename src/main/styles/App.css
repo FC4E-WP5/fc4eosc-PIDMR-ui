@@ -344,3 +344,27 @@ footer a {
   color: #1967d2 !important;
   background: #d2e3fc;
 }
+
+.pid-detail-container h2 {
+  display: flex;
+  align-items: left;
+}
+
+.pid-detail-container span {
+  padding-left: 8px;
+}
+
+.fabackground {
+  color: #bc9317;
+}
+
+.regex-display {
+  background-color: #f4f4f4;
+  display: block;
+  padding: 10px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.8em;
+  color: #333;
+  white-space: pre-wrap; /* keep line breaks */
+  word-break: break-word; /* allow wrapping */
+}
