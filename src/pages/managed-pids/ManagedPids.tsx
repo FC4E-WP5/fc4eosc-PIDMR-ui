@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 import AdminLayout from "../../common/components/AdminLayout";
 import Icon from "../../common/components/Icon";
 import { StatusModal } from "./StatusModal";
+import getProviderLogoName from "../../utils/getProviderLogoName";
 
 // API endpoint declared in env variable
 const PIDMR_API = import.meta.env.VITE_PIDMR_API;
@@ -67,23 +68,6 @@ const customStyles = (isScreenSmall = false) => ({
     },
   },
 });
-
-// Create a mapping from provider types to their respective logo files
-const LOGO_MAPPING: Record<string, string> = {
-  ARK: "logoARK.png",
-  ARXIV: "logoARXIV.png",
-  DOI: "logoDOI.png",
-  EPICOLD: "logoEPIC.png",
-  "URN:NBN:DE": "logoNBNDE.png",
-  "URN:NBN:FI": "logoNBNFI.png",
-  "10.5281/ZENODO": "logoZenodo.svg",
-  DEFAULT: "logoSWH.png",
-};
-
-const getProviderLogo = (type: string): string => {
-  const upperType = type.replace(/\s/g, "").toUpperCase();
-  return LOGO_MAPPING[upperType] || LOGO_MAPPING.DEFAULT;
-};
 
 const SMALL_SCREEN_BREAKPOINT = 991;
 
@@ -285,7 +269,7 @@ const ManagedPids = () => {
       cell: (row) => (
         <div className="d-flex align-items-center gap-2">
           <Icon
-            fileName={getProviderLogo(row.type)}
+            fileName={getProviderLogoName(row.type)}
             height="28px"
             width="28px"
           />
