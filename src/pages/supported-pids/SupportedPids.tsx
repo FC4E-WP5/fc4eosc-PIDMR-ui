@@ -7,28 +7,12 @@ import {
   PaginationProps,
 } from "../../types";
 import Icon from "../../common/components/Icon";
+import getProviderLogoName from "../../utils/getProviderLogoName";
 
 // API endpoint declared in env variable
 const PIDMR_API = import.meta.env.VITE_PIDMR_API;
 // TODO: pagination support in case of a large collection of providers - keep it simple for the time being
 const PROVIDERS_API_ROUTE = `${PIDMR_API}/v1/providers`;
-
-// Create a mapping from provider types to their respective logo files
-const LOGO_MAPPING: Record<string, string> = {
-  ARK: "logoARK.png",
-  ARXIV: "logoARXIV.png",
-  DOI: "logoDOI.png",
-  EPICOLD: "logoEPIC.png",
-  "URN:NBN:DE": "logoNBNDE.png",
-  "URN:NBN:FI": "logoNBNFI.png",
-  "10.5281/ZENODO": "logoZenodo.svg",
-  DEFAULT: "logoSWH.png",
-};
-
-const getProviderLogo = (type: string): string => {
-  const upperType = type.replace(/\s/g, "").toUpperCase();
-  return LOGO_MAPPING[upperType] || LOGO_MAPPING.DEFAULT;
-};
 
 function renderProviderCard(item: Provider) {
   const actions = item.resolution_modes.map(
@@ -49,7 +33,7 @@ function renderProviderCard(item: Provider) {
           <div className="headerblock">
             <div className="imgblock" aria-hidden="true">
               <Icon
-                fileName={getProviderLogo(item.type)}
+                fileName={getProviderLogoName(item.type)}
                 height="32px"
                 width="32px"
               />

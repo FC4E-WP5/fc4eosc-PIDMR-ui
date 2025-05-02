@@ -9,11 +9,10 @@ import {
   OverlayTrigger,
   Tooltip,
 } from "react-bootstrap";
+import generateResolvePidUrl from "../../utils/generateResolvePidUrl";
 
 // API endpoint declared in env variable
 const PIDMR_API = import.meta.env.VITE_PIDMR_API;
-// Backend references used in resolving stuff
-const RESOLVE_API_ROUTE = `${PIDMR_API}/v1/metaresolvers/resolve`;
 // Backend references used in resolving stuff
 const IDENTIFY_API_ROUTE = `${PIDMR_API}/v2/providers/identify`;
 // default debounce input timeout at 300 ms
@@ -56,16 +55,6 @@ function sortResolutionModes(
   return modes.sort(
     (a, b) => button_order.indexOf(a.mode) - button_order.indexOf(b.mode),
   );
-}
-
-// generate resolve urls given resolve mode and pid
-function generateResolveURL(
-  resolutionMode: ResolutionModes,
-  pid: string,
-): string {
-  return `${RESOLVE_API_ROUTE}?pidMode=${resolutionMode}&redirect=true&pid=${encodeURIComponent(
-    pid,
-  )}`;
 }
 
 // Provide an initial state object for the ui
@@ -185,7 +174,7 @@ function HomePage() {
                               as="a"
                               className="border-0"
                               disabled={result.status !== IdStatus.Valid}
-                              href={generateResolveURL(
+                              href={generateResolvePidUrl(
                                 mode.mode as ResolutionModes,
                                 pid,
                               )}

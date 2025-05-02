@@ -7,33 +7,27 @@ import {
   FaNotEqual,
   FaCheck,
   FaDna,
+  FaHome,
+  FaSourcetree,
 } from "react-icons/fa";
 
 import ROUTES from "../../server/endpoints/routes";
 import { Provider } from "../../types";
-import { Button, Spinner } from "react-bootstrap";
+import { Button, Spinner, OverlayTrigger, Tooltip } from "react-bootstrap";
 import Icon from "../../common/components/Icon";
+import generateResolvePidUrl from "../../utils/generateResolvePidUrl";
+import getProviderLogoName from "../../utils/getProviderLogoName";
 
 // API endpoint declared in env variable
 const PIDMR_API = import.meta.env.VITE_PIDMR_API;
 const PROVIDER_API_ROUTE = `${PIDMR_API}/v1/providers`;
 
-// Create a mapping from provider types to their respective logo files
-const LOGO_MAPPING: Record<string, string> = {
-  ARK: "logoARK.png",
-  ARXIV: "logoARXIV.png",
-  DOI: "logoDOI.png",
-  EPICOLD: "logoEPIC.png",
-  "URN:NBN:DE": "logoNBNDE.png",
-  "URN:NBN:FI": "logoNBNFI.png",
-  "10.5281/ZENODO": "logoZenodo.svg",
-  DEFAULT: "logoSWH.png",
-};
-
-const getProviderLogo = (type: string): string => {
-  const upperType = type.replace(/\s/g, "").toUpperCase();
-  return LOGO_MAPPING[upperType] || LOGO_MAPPING.DEFAULT;
-};
+// resolution mode values
+enum ResolutionModes {
+  LandingPage = "landingpage",
+  Metadata = "metadata",
+  Resource = "resource",
+}
 
 function PidDetail() {
   const { id } = useParams();
@@ -102,8 +96,7 @@ function PidDetail() {
             <h2>
               {" "}
               <Icon
-                fileName={getProviderLogo(provider?.type)}
-                className="provider-logo"
+                fileName={getProviderLogoName(provider?.type)}
                 width="34px"
                 height="34px"
               />{" "}
@@ -156,8 +149,63 @@ function PidDetail() {
             </h5>
             <div>
               {provider?.resolution_modes.map((mode) => (
-                <div key={mode.mode}>
-                  <span>{mode.name}</span>
+                <div key={mode.mode} className="mb-3">
+                  <strong>{mode.name}</strong>
+                  <div className="ms-2 mt-1">
+                    {mode.mode === "landingpage" && (
+                      <p>
+                        Landing pages are directly accessible and referenced in
+                        the PID and provide additional information about the
+                        referenced object. This is the first instance of
+                        resolving a PID and provides a brief summary of the
+                        content of PID including some metadata. The landing page
+                        is provided in HTML format and is not machine
+                        actionable.
+                      </p>
+                    )}
+
+                    {mode.mode === "metadata" && (
+                      <p>
+                        Metadata describes the, with a PID, referenced object
+                        and provide detailed specification of the object based
+                        on the predefined PID schema and is either included
+                        within the PID or can be retrieved using the PID itself.
+                        Metadata are usually provided in JSON as well as XML
+                        format though other formats like in case of content
+                        negotiation for instance could be provided including
+                        Bibtex, RDF Turtle and so on. Metadata are machine
+                        actionable.
+                      </p>
+                    )}
+                    {mode.mode === "resource" && (
+                      <p>
+                        The resource is the referenced object accessible either
+                        directly or via a landing page. The resource of an
+                        object is normally given within the metadata.
+                        Accessibility of the resources depends on the service
+                        provider. Resources are usually provided in different
+                        formats including PDF, Document, HTML and other
+                        community specific formats. Machine actionable but not
+                        by default.
+                      </p>
+                    )}
+                  </div>
+                  {mode?.endpoints &&
+                    mode?.endpoints.length > 0 &&
+                    mode?.endpoints[0]?.link &&
+                    mode?.endpoints[0]?.link.trim() !== "" && (
+                      <div>
+                        <span>Resolution URL:</span>{" "}
+                        <a
+                          className="text-decoration-none"
+                          href={mode?.endpoints[0]?.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {mode?.endpoints[0]?.link}
+                        </a>
+                      </div>
+                    )}
                 </div>
               ))}
             </div>
@@ -170,7 +218,61 @@ function PidDetail() {
             <hr />
             {provider?.examples && provider.examples?.length > 0 && (
               <div>
-                <span>{provider?.examples[0]}</span>
+                <p className="mb-3">
+                  Sample PID: <strong>{provider?.examples[0]}</strong>
+                </p>
+
+                {provider?.resolution_modes.some(
+                  (mode) =>
+                    mode?.endpoints &&
+                    mode?.endpoints.length > 0 &&
+                    mode?.endpoints[0]?.link,
+                ) && (
+                  <div className="d-flex align-items-center gap-1">
+                    <h6 className="mt-1">Example Resolution URL(s):</h6>
+                    {provider?.resolution_modes.map((mode) => {
+                      if (!provider.examples[0]) {
+                        return null;
+                      }
+
+                      const resolvedUrl = generateResolvePidUrl(
+                        mode.mode as ResolutionModes,
+                        provider.examples[0],
+                      );
+
+                      return (
+                        <div key={mode.mode} className="mb-1">
+                          <div>
+                            <OverlayTrigger
+                              placement="bottom"
+                              overlay={<Tooltip>{mode.name}</Tooltip>}
+                            >
+                              <Button
+                                as="a"
+                                className="border-0"
+                                href={resolvedUrl}
+                                rel="noreferrer"
+                                size="sm"
+                                target="_blank"
+                                variant="outline-secondary"
+                              >
+                                {mode.mode === "landingpage" && (
+                                  <FaHome size={28} />
+                                )}
+                                {mode.mode === "metadata" && (
+                                  <FaBarcode size={28} />
+                                )}
+                                {mode.mode === "resource" && (
+                                  <FaSourcetree size={28} />
+                                )}
+                              </Button>
+                            </OverlayTrigger>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
           </div>
