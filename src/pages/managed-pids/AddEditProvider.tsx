@@ -26,6 +26,7 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
     relies_on_dois: false,
     resolution_modes: [],
     regexes: [""],
+    metadata_path: [],
   });
 
   const handleRegexChange = (index: number, value: string) => {
@@ -43,6 +44,42 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
   const handleRegexAdd = () => {
     const updatedRegexes = [...info.regexes, ""];
     setInfo({ ...info, regexes: updatedRegexes });
+  };
+
+  const handleMetadataPathChange = (
+    index: number,
+    field: "provider" | "path",
+    value: string,
+  ) => {
+    const updatedInfo = { ...info };
+    if (updatedInfo.metadata_path) {
+      updatedInfo.metadata_path[index] = {
+        ...updatedInfo.metadata_path[index],
+        [field]: value,
+      };
+      setInfo(updatedInfo);
+    }
+  };
+
+  const handleMetadataPathRemove = (index: number) => {
+    const updatedInfo = { ...info };
+    if (updatedInfo.metadata_path) {
+      updatedInfo.metadata_path.splice(index, 1);
+      setInfo(updatedInfo);
+    }
+  };
+
+  const handleMetadataPathAdd = () => {
+    const updatedInfo = { ...info };
+    if (updatedInfo.metadata_path) {
+      updatedInfo.metadata_path = [
+        ...updatedInfo.metadata_path,
+        { provider: "", path: "" },
+      ];
+    } else {
+      updatedInfo.metadata_path = [{ provider: "", path: "" }];
+    }
+    setInfo(updatedInfo);
   };
 
   const handleExampleChange = (index: number, value: string) => {
@@ -87,7 +124,6 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
                 endpoints: item.endpoints || [],
               })),
             };
-            console.log(loadedInfo);
             setInfo(loadedInfo);
           }
         } catch (error: unknown) {
@@ -104,7 +140,17 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
 
   const handleSubmit = async () => {
     if (keycloak) {
-      console.log(info);
+      const sumbittedData = { ...info };
+
+      // Filter out metadata_path entries with empty fields
+      if (
+        sumbittedData.metadata_path &&
+        sumbittedData.metadata_path.length > 0
+      ) {
+        sumbittedData.metadata_path = sumbittedData.metadata_path.filter(
+          (item) => item.provider.trim() !== "" && item.path.trim() !== "",
+        );
+      }
 
       const method = editMode ? "PATCH" : "POST";
       const url = editMode
@@ -117,7 +163,7 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${keycloak.token}`,
           },
-          body: JSON.stringify(info),
+          body: JSON.stringify(sumbittedData),
         });
 
         if (response.ok) {
@@ -436,6 +482,70 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
               </div>
             ))}
           </Form.Group>
+          <Form.Group
+            className=" d-flex flex-column mb-3 mt-4"
+            controlId="formProviderMetadataPath"
+          >
+            <div>
+              <Form.Label>Metadata Path Templates</Form.Label>
+              <span className="info-icon">
+                {" "}
+                i
+                <span className="info-text">
+                  {AddEditProviderInfo.metadata_path.info}
+                </span>
+              </span>
+            </div>
+            {info.metadata_path &&
+              info.metadata_path.map((metadataItem, index) => (
+                <Row key={`metadata-${index}`} className="mb-2">
+                  <Col xs={5}>
+                    <Form.Control
+                      type="text"
+                      value={metadataItem.provider}
+                      onChange={(e) =>
+                        handleMetadataPathChange(
+                          index,
+                          "provider",
+                          e.target.value,
+                        )
+                      }
+                      placeholder="Provider name"
+                    />
+                  </Col>
+                  <Col xs={6}>
+                    <Form.Control
+                      type="text"
+                      value={metadataItem.path}
+                      onChange={(e) =>
+                        handleMetadataPathChange(index, "path", e.target.value)
+                      }
+                      placeholder="Path template"
+                    />
+                  </Col>
+                  <Col xs={1}>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleMetadataPathRemove(index)}
+                    >
+                      -
+                    </Button>
+                  </Col>
+                </Row>
+              ))}
+
+            {editMode !== 2 && (
+              <Button
+                size="sm"
+                onClick={handleMetadataPathAdd}
+                variant="outline-success"
+                style={{ width: "fit-content" }}
+              >
+                Add Metadata Path
+              </Button>
+            )}
+          </Form.Group>
           <Form.Group className="mb-3 mt-4" controlId="formProviderExamples">
             <Form.Label>PID Examples</Form.Label>
             <span className="info-icon">
@@ -481,14 +591,16 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
             </Button>
           </Form.Group>
         </fieldset>
-        {editMode !== 2 && (
-          <>
-            <Button onClick={handleSubmit}>Submit</Button>{" "}
-          </>
-        )}
-        <Link className="btn btn-secondary ms-2" to="/managed-pids">
-          {editMode === 2 ? "Back" : "Cancel"}
-        </Link>
+        <div className="mb-5 mt-3">
+          {editMode !== 2 && (
+            <>
+              <Button onClick={handleSubmit}>Submit</Button>{" "}
+            </>
+          )}
+          <Link className="btn btn-secondary ms-2" to="/managed-pids">
+            {editMode === 2 ? "Back" : "Cancel"}
+          </Link>
+        </div>
       </Form>
     </div>
   );
