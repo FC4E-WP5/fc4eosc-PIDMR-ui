@@ -31,6 +31,7 @@ export type Provider = {
   examples: string[];
   user_id: string | null;
   validator: string | null;
+  metadata_path?: MetadataPath[];
 };
 
 export type ResolutionMode = {
@@ -44,6 +45,11 @@ export type Endpoint = {
   provider: string;
 };
 
+export type MetadataPath = {
+  provider: string;
+  path: string;
+};
+
 export type ProviderInput = {
   type: string;
   name: string;
@@ -52,6 +58,7 @@ export type ProviderInput = {
   resolution_modes: ResolutionMode[];
   regexes: string[];
   examples: string[];
+  metadata_path?: MetadataPath[];
 };
 
 export type RoleChangeRequest = {

@@ -70,7 +70,7 @@ function Navigation() {
         )}
         {authenticated && (
           <>
-            <Dropdown>
+            <Dropdown align="end">
               <Dropdown.Toggle variant="primary" id="dropdown-basic">
                 <FaUser /> {trimUserid(userid)}
               </Dropdown.Toggle>
