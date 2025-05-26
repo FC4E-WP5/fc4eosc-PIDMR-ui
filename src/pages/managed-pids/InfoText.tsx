@@ -11,7 +11,7 @@ interface ProviderInfo {
   relies_on_dois: FieldInfo;
   modes: FieldInfo;
   examples: FieldInfo;
-  metadata_path: FieldInfo;
+  resource_path_in_metadata: FieldInfo;
 }
 
 interface UserInfo {
@@ -51,7 +51,7 @@ const AddEditProviderInfo: ProviderInfo = {
     label: "Label",
     info: "Please add a PID that could be used as an example in the PID Meta Resolver",
   },
-  metadata_path: {
+  resource_path_in_metadata: {
     label: "Label",
     info: "Define provider-specific path templates for metadata extraction",
   },

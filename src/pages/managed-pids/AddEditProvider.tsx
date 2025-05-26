@@ -26,7 +26,12 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
     relies_on_dois: false,
     resolution_modes: [],
     regexes: [""],
-    metadata_path: [],
+    resource_path_in_metadata: [
+      {
+        provider: "",
+        path: "",
+      },
+    ],
   });
 
   const handleRegexChange = (index: number, value: string) => {
@@ -52,9 +57,9 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
     value: string,
   ) => {
     const updatedInfo = { ...info };
-    if (updatedInfo.metadata_path) {
-      updatedInfo.metadata_path[index] = {
-        ...updatedInfo.metadata_path[index],
+    if (updatedInfo.resource_path_in_metadata) {
+      updatedInfo.resource_path_in_metadata[index] = {
+        ...updatedInfo.resource_path_in_metadata[index],
         [field]: value,
       };
       setInfo(updatedInfo);
@@ -63,21 +68,21 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
 
   const handleMetadataPathRemove = (index: number) => {
     const updatedInfo = { ...info };
-    if (updatedInfo.metadata_path) {
-      updatedInfo.metadata_path.splice(index, 1);
+    if (updatedInfo.resource_path_in_metadata) {
+      updatedInfo.resource_path_in_metadata.splice(index, 1);
       setInfo(updatedInfo);
     }
   };
 
-  const handleMetadataPathAdd = () => {
+  const handleResourcePath = () => {
     const updatedInfo = { ...info };
-    if (updatedInfo.metadata_path) {
-      updatedInfo.metadata_path = [
-        ...updatedInfo.metadata_path,
+    if (updatedInfo.resource_path_in_metadata) {
+      updatedInfo.resource_path_in_metadata = [
+        ...updatedInfo.resource_path_in_metadata,
         { provider: "", path: "" },
       ];
     } else {
-      updatedInfo.metadata_path = [{ provider: "", path: "" }];
+      updatedInfo.resource_path_in_metadata = [{ provider: "", path: "" }];
     }
     setInfo(updatedInfo);
   };
@@ -142,14 +147,15 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
     if (keycloak) {
       const sumbittedData = { ...info };
 
-      // Filter out metadata_path entries with empty fields
+      // Filter out resource_path_in_metadata entries with empty fields
       if (
-        sumbittedData.metadata_path &&
-        sumbittedData.metadata_path.length > 0
+        sumbittedData.resource_path_in_metadata &&
+        sumbittedData.resource_path_in_metadata.length > 0
       ) {
-        sumbittedData.metadata_path = sumbittedData.metadata_path.filter(
-          (item) => item.provider.trim() !== "" && item.path.trim() !== "",
-        );
+        sumbittedData.resource_path_in_metadata =
+          sumbittedData.resource_path_in_metadata.filter(
+            (item) => item.provider.trim() !== "" && item.path.trim() !== "",
+          );
       }
 
       const method = editMode ? "PATCH" : "POST";
@@ -482,70 +488,75 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
               </div>
             ))}
           </Form.Group>
-          <Form.Group
-            className=" d-flex flex-column mb-3 mt-4"
-            controlId="formProviderMetadataPath"
-          >
-            <div>
-              <Form.Label>Metadata Path Templates</Form.Label>
-              <span className="info-icon">
-                {" "}
-                i
-                <span className="info-text">
-                  {AddEditProviderInfo.metadata_path.info}
-                </span>
-              </span>
-            </div>
-            {info.metadata_path &&
-              info.metadata_path.map((metadataItem, index) => (
-                <Row key={`metadata-${index}`} className="mb-2">
-                  <Col xs={5}>
-                    <Form.Control
-                      type="text"
-                      value={metadataItem.provider}
-                      onChange={(e) =>
-                        handleMetadataPathChange(
-                          index,
-                          "provider",
-                          e.target.value,
-                        )
-                      }
-                      placeholder="Provider name"
-                    />
-                  </Col>
-                  <Col xs={6}>
-                    <Form.Control
-                      type="text"
-                      value={metadataItem.path}
-                      onChange={(e) =>
-                        handleMetadataPathChange(index, "path", e.target.value)
-                      }
-                      placeholder="Path template"
-                    />
-                  </Col>
-                  <Col xs={1}>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => handleMetadataPathRemove(index)}
-                    >
-                      -
-                    </Button>
-                  </Col>
-                </Row>
-              ))}
 
-            {editMode !== 2 && (
+          {((info.resource_path_in_metadata?.length !== 0 && editMode === 2) ||
+            editMode !== 2) && (
+            <Form.Group
+              className="d-flex flex-column mb-3 mt-4"
+              controlId="formProviderMetadataPath"
+            >
+              <div>
+                <Form.Label>Resource Path in Metadata</Form.Label>
+                <span className="info-icon">
+                  {" "}
+                  i
+                  <span className="info-text">
+                    {AddEditProviderInfo.resource_path_in_metadata.info}
+                  </span>
+                </span>
+              </div>
+
+              {info.resource_path_in_metadata &&
+                info.resource_path_in_metadata.map((metadataItem, index) => (
+                  <Row key={`metadata-${index}`} className="mb-1">
+                    <Col>
+                      <Form.Control
+                        type="text"
+                        value={metadataItem.provider}
+                        onChange={(e) =>
+                          handleMetadataPathChange(
+                            index,
+                            "provider",
+                            e.target.value,
+                          )
+                        }
+                        placeholder="Provider name"
+                      />
+                    </Col>
+                    <Col>
+                      <Form.Control
+                        type="text"
+                        value={metadataItem.path}
+                        onChange={(e) =>
+                          handleMetadataPathChange(
+                            index,
+                            "path",
+                            e.target.value,
+                          )
+                        }
+                        placeholder="Path template"
+                      />
+                    </Col>
+                    <Col xs="auto">
+                      <Button
+                        variant="outline-danger"
+                        onClick={() => handleMetadataPathRemove(index)}
+                      >
+                        Delete
+                      </Button>
+                    </Col>
+                  </Row>
+                ))}
               <Button
                 size="sm"
-                onClick={handleMetadataPathAdd}
+                onClick={handleResourcePath}
                 variant="outline-success"
                 style={{ width: "fit-content" }}
               >
-                Add Metadata Path
+                Add Resource Path
               </Button>
-            )}
-          </Form.Group>
+            </Form.Group>
+          )}
           <Form.Group className="mb-3 mt-4" controlId="formProviderExamples">
             <Form.Label>PID Examples</Form.Label>
             <span className="info-icon">
