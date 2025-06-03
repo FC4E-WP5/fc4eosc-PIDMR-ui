@@ -116,6 +116,7 @@ function HomePage() {
           providers
         </p>
         <input
+          autoFocus
           type="text"
           className="form-control"
           id="input-pid"
