@@ -1,0 +1,77 @@
+{
+  "@context": "https://w3id.org/codemeta/3.0",
+  "type": "SoftwareSourceCode",
+  "applicationCategory": "PIDMR - UI",
+  "author": [
+    {
+      "id": "https://orcid.org/0000-0002-2449-7045",
+      "type": "Person",
+      "affiliation": {
+        "type": "Organization",
+        "name": "National Infrastructures for Research and Technology -  GRNET S.A"
+      },
+      "email": "kaggis@grnet.gr",
+      "familyName": "Kagkelidis",
+      "givenName": "Konstantinos"
+    },
+    {
+      "type": "Role",
+      "schema:author": "https://orcid.org/0000-0002-2449-7045",
+      "roleName": "Developer"
+    },
+    {
+      "id": "https://orcid.org/0000-0003-1148-1738",
+      "type": "Person",
+      "affiliation": {
+        "type": "Organization",
+        "name": "National Infrastructures for Research and Technology -  GRNET S.A"
+      },
+      "email": "themis@admin.grnet.gr",
+      "familyName": "Zamani",
+      "givenName": "Themis"
+    },
+    {
+      "type": "Role",
+      "schema:author": "https://orcid.org/0000-0003-1148-1738",
+      "roleName": "Developer"
+    },
+    {
+      "id": "https://orcid.org/0009-0003-3084-8977",
+      "type": "Person",
+      "affiliation": {
+        "type": "Organization",
+        "name": "National Infrastructures for Research and Technology -  GRNET S.A"
+      },
+      "email": "epantelaios@admin.grnet.gr",
+      "familyName": "Pantelaios",
+      "givenName": "Evripidis"
+    },
+    {
+      "type": "Role",
+      "schema:author": "https://orcid.org/0009-0003-3084-8977",
+      "roleName": "Developer"
+    }
+  ],
+  "codeRepository": "https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui",
+  "dateCreated": "2023-03-9",
+  "datePublished": "2024-01-25",
+  "description": "The PID Meta Resolver is a generalized resolver for mapping items into records. Actually the PID Meta Resolver will know where to route different types of identifier – ex. DOI, URN:NBN.",
+  "downloadUrl": "https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/archive/refs/heads/main.zip",
+  "funder": {
+    "type": "Organization",
+    "name": "European Commission"
+  },
+  "identifier": "https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui",
+  "keywords": ["FC4E", "PIDMR", "UI"],
+  "license": "https://spdx.org/licenses/Apache-2.0",
+  "name": "FC4E PIDMR UI",
+  "operatingSystem": "Rocky Linux 9.0",
+  "programmingLanguage": "Typescript",
+  "releaseNotes": "https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/releases",
+  "runtimePlatform": ["Web Browser", "Node.js"],
+  "softwareRequirements": "Node.js, npm, Vite",
+  "version": "1.4.0",
+  "developmentStatus": "active",
+  "funding": "Funded by European Commission under grant number 101057264.",
+  "issueTracker": "https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/issues"
+}
