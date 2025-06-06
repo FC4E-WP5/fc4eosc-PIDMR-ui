@@ -1,11 +1,19 @@
 import { Badge, Button, Col, Form, Row } from "react-bootstrap";
-import { FaEdit, FaInfoCircle, FaPlusCircle } from "react-icons/fa";
+import {
+  FaEdit,
+  FaInfoCircle,
+  FaPlusCircle,
+  FaUpload,
+  FaTrash,
+} from "react-icons/fa";
 import { AuthContext } from "../../auth";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Endpoint, Provider, ProviderInput } from "../../types";
 import { toast } from "react-hot-toast";
 import { AddEditProviderInfo } from "./InfoText";
+import { useDropzone } from "react-dropzone";
+import ProviderLogo from "../../common/components/ProviderLogo";
 
 // API endpoint declared in env variable
 const PIDMR_API = import.meta.env.VITE_PIDMR_API;
@@ -32,7 +40,11 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
         path: "",
       },
     ],
+    image_base_64: "",
+    image_url_path: "",
   });
+
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleRegexChange = (index: number, value: string) => {
     const updatedInfo = { ...info };
@@ -121,6 +133,7 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
 
           if (response.ok) {
             const responseData = (await response.json()) as Provider;
+
             const loadedInfo = {
               ...responseData,
               resolution_modes: responseData.resolution_modes.map((item) => ({
@@ -130,6 +143,11 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
               })),
             };
             setInfo(loadedInfo);
+
+            // Set image preview if the provider has an image URL
+            if (loadedInfo?.image_url_path) {
+              setImagePreview(loadedInfo.image_url_path);
+            }
           }
         } catch (error: unknown) {
           toast.error("Error while trying to add new provider!");
@@ -263,6 +281,48 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
       return item;
     });
     setInfo({ ...info, resolution_modes: updatedModes });
+  };
+
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const file = acceptedFiles[0];
+
+      if (file.type !== "image/png" && file.type !== "image/jpeg") {
+        toast.error("Only PNG and JPEG image formats are supported");
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Image size must be less than 5MB");
+        return;
+      }
+
+      // Read file as base64
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          const base64String = event.target.result as string;
+          setInfo({ ...info, image_base_64: base64String });
+          setImagePreview(base64String);
+        }
+      };
+      reader.readAsDataURL(file);
+    },
+    [info],
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      "image/png": [".png"],
+      "image/jpeg": [".jpg", ".jpeg"],
+    },
+    maxFiles: 1,
+  });
+
+  const handleRemoveImage = () => {
+    setInfo({ ...info, image_base_64: "", image_url_path: "" });
+    setImagePreview(null);
   };
 
   return (
@@ -557,6 +617,65 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
               </Button>
             </Form.Group>
           )}
+
+          <Form.Group className="mb-3 mt-4" controlId="formProviderLogo">
+            <Form.Label>Provider Logo</Form.Label>
+            <span className="info-icon">
+              {" "}
+              i
+              <span className="info-text">{AddEditProviderInfo.logo.info}</span>
+            </span>
+            <div className="mb-3">
+              {imagePreview || info.image_url_path || editMode === 2 ? (
+                <div className="text-center">
+                  <ProviderLogo
+                    imageUrl={
+                      info.image_url_path ||
+                      imagePreview ||
+                      (editMode !== 1 && info.type) ||
+                      ""
+                    }
+                    providerType={info.type}
+                    providerName={info.name}
+                    height="150px"
+                    width="auto"
+                  />
+                </div>
+              ) : (
+                <div className="dropzone-wrapper" {...getRootProps()}>
+                  <input {...getInputProps()} />
+                  {isDragActive ? (
+                    <p>Drop the file here...</p>
+                  ) : (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <FaUpload size={24} className="mb-2 opacity-50" />
+                      <span>
+                        Drag & drop a logo here, or click to select (PNG/JPEG,
+                        Max file size 5MB)
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            <Button
+              disabled={!imagePreview && !info.image_url_path}
+              variant="outline-danger"
+              size="sm"
+              onClick={handleRemoveImage}
+              className="d-block mx-auto mt-1"
+            >
+              <FaTrash /> Remove Image
+            </Button>
+          </Form.Group>
+
           <Form.Group className="mb-3 mt-4" controlId="formProviderExamples">
             <Form.Label>PID Examples</Form.Label>
             <span className="info-icon">

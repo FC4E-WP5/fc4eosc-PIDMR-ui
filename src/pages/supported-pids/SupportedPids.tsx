@@ -6,8 +6,7 @@ import {
   ResolutionMode,
   PaginationProps,
 } from "../../types";
-import Icon from "../../common/components/Icon";
-import getProviderLogoName from "../../utils/getProviderLogoName";
+import ProviderLogo from "../../common/components/ProviderLogo";
 
 // API endpoint declared in env variable
 const PIDMR_API = import.meta.env.VITE_PIDMR_API;
@@ -32,8 +31,10 @@ function renderProviderCard(item: Provider) {
         <Link className="header" to={"/supported-pids/" + item.id}>
           <div className="headerblock">
             <div className="imgblock" aria-hidden="true">
-              <Icon
-                fileName={getProviderLogoName(item.type)}
+              <ProviderLogo
+                imageUrl={item?.image_url_path}
+                providerType={item.type}
+                providerName={item.name}
                 height="32px"
                 width="32px"
               />

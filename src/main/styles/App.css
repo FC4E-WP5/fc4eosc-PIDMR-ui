@@ -368,3 +368,14 @@ footer a {
   white-space: pre-wrap; /* keep line breaks */
   background-color: #f4f4f4;
 }
+
+.dropzone-wrapper {
+  display: "flex";
+  justify-content: "center";
+  height: "150px";
+  padding: "1.25rem";
+  text-align: "center";
+  cursor: "pointer";
+  border: "2px dashed #cccccc";
+  border-radius: "0.5rem";
+}
