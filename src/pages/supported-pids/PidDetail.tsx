@@ -14,9 +14,8 @@ import {
 import ROUTES from "../../server/endpoints/routes";
 import { Provider } from "../../types";
 import { Button, Spinner, OverlayTrigger, Tooltip } from "react-bootstrap";
-import Icon from "../../common/components/Icon";
 import generateResolvePidUrl from "../../utils/generateResolvePidUrl";
-import getProviderLogoName from "../../utils/getProviderLogoName";
+import ProviderLogo from "../../common/components/ProviderLogo";
 
 // API endpoint declared in env variable
 const PIDMR_API = import.meta.env.VITE_PIDMR_API;
@@ -93,15 +92,16 @@ function PidDetail() {
       ) : (
         <div className="row my-5">
           <div className="col-12 mx-auto">
-            <h2>
-              {" "}
-              <Icon
-                fileName={getProviderLogoName(provider?.type)}
+            <div className="d-flex gap-2">
+              <ProviderLogo
+                imageUrl={provider?.image_url_path}
+                providerType={provider?.type}
+                providerName={provider?.name}
                 width="34px"
                 height="34px"
               />{" "}
-              <span>{provider?.name}</span>
-            </h2>
+              <h2>{provider?.name}</h2>
+            </div>
           </div>
           <div className="col-12 mx-auto">{provider?.description}</div>
           <div className="col-12 mx-auto">

@@ -18,9 +18,8 @@ import DataTable, { TableColumn } from "react-data-table-component";
 import { DeleteModal } from "../../common/components/DeleteModal";
 import toast from "react-hot-toast";
 import AdminLayout from "../../common/components/AdminLayout";
-import Icon from "../../common/components/Icon";
+import ProviderLogo from "../../common/components/ProviderLogo";
 import { StatusModal } from "./StatusModal";
-import getProviderLogoName from "../../utils/getProviderLogoName";
 
 // API endpoint declared in env variable
 const PIDMR_API = import.meta.env.VITE_PIDMR_API;
@@ -268,8 +267,10 @@ const ManagedPids = () => {
       sortable: true,
       cell: (row) => (
         <div className="d-flex align-items-center gap-2">
-          <Icon
-            fileName={getProviderLogoName(row.type)}
+          <ProviderLogo
+            imageUrl={row?.image_url_path}
+            providerType={row.type}
+            providerName={row.name}
             height="28px"
             width="28px"
           />

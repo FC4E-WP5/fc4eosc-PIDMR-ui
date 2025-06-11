@@ -32,6 +32,7 @@ export type Provider = {
   user_id: string | null;
   validator: string | null;
   resource_path_in_metadata?: MetadataPath[];
+  image_url_path?: string;
 };
 
 export type ResolutionMode = {
@@ -59,6 +60,8 @@ export type ProviderInput = {
   regexes: string[];
   examples: string[];
   resource_path_in_metadata?: MetadataPath[];
+  image_base_64?: string;
+  image_url_path?: string;
 };
 
 export type RoleChangeRequest = {

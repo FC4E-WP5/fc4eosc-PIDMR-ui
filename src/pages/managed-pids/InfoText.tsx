@@ -12,6 +12,7 @@ interface ProviderInfo {
   modes: FieldInfo;
   examples: FieldInfo;
   resource_path_in_metadata: FieldInfo;
+  logo: FieldInfo;
 }
 
 interface UserInfo {
@@ -54,6 +55,10 @@ const AddEditProviderInfo: ProviderInfo = {
   resource_path_in_metadata: {
     label: "Label",
     info: "Define provider-specific path templates for metadata extraction",
+  },
+  logo: {
+    label: "Logo",
+    info: "Upload a logo for the provider (PNG or JPEG, Max file size 5MB)",
   },
 };
 
