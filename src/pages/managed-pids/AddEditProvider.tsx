@@ -203,7 +203,11 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
                   editMode ? "update" : "add new"
                 } Provider:`}</strong>
                 <br />
-                <span>{data.message}</span>
+                <span>
+                  {info.type?.includes("/")
+                    ? "The '/' character is not allowed in the PID Type field."
+                    : data.message}
+                </span>
               </div>,
             );
           });
@@ -353,7 +357,7 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
       <Form className="mt-4">
         <fieldset disabled={editMode === 2}>
           <Row className="mb-3">
-            <Form.Group as={Col} controlId="formProviderPidType">
+            <Form.Group as={Col} controlId="formProviderType">
               <Form.Label>PID Type</Form.Label>
               <span className="info-icon">
                 {" "}
@@ -363,9 +367,9 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
                 </span>
               </span>
               <Form.Control
-                type="text"
                 placeholder="Enter PID Type"
                 onChange={(e) => setInfo({ ...info, type: e.target.value })}
+                type="text"
                 value={info.type}
               />
             </Form.Group>
@@ -635,7 +639,6 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
                       (editMode !== 1 && info.type) ||
                       ""
                     }
-                    providerType={info.type}
                     providerName={info.name}
                     height="150px"
                     width="auto"
@@ -645,7 +648,7 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
                 <div className="dropzone-wrapper" {...getRootProps()}>
                   <input {...getInputProps()} />
                   {isDragActive ? (
-                    <p>Drop the file here...</p>
+                    <p style={{ margin: "auto" }}>Drop the file here...</p>
                   ) : (
                     <div
                       style={{
