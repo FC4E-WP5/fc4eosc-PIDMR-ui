@@ -269,7 +269,6 @@ const ManagedPids = () => {
         <div className="d-flex align-items-center gap-2">
           <ProviderLogo
             imageUrl={row?.image_url_path}
-            providerType={row.type}
             providerName={row.name}
             height="28px"
             width="28px"
@@ -289,7 +288,7 @@ const ManagedPids = () => {
             selector: (row: Provider) => row.description,
             cell: (row: Provider) => {
               const shortDesc =
-                row.description.length > 150
+                row?.description?.length > 150
                   ? row.description.substring(0, 150) + "..."
                   : row.description;
 
@@ -402,7 +401,7 @@ const ManagedPids = () => {
     const matchesText =
       (request?.name &&
         request.name.toLowerCase().includes(filterText.toLowerCase())) ||
-      (request.description &&
+      (request?.description &&
         request.description.toLowerCase().includes(filterText.toLowerCase()));
 
     const matchesType =

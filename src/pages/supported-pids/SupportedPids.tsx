@@ -33,7 +33,6 @@ function renderProviderCard(item: Provider) {
             <div className="imgblock" aria-hidden="true">
               <ProviderLogo
                 imageUrl={item?.image_url_path}
-                providerType={item.type}
                 providerName={item.name}
                 height="32px"
                 width="32px"

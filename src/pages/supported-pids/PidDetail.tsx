@@ -95,7 +95,6 @@ function PidDetail() {
             <div className="d-flex gap-2">
               <ProviderLogo
                 imageUrl={provider?.image_url_path}
-                providerType={provider?.type}
                 providerName={provider?.name}
                 width="34px"
                 height="34px"

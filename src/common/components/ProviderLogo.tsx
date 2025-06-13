@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import Icon from "./Icon";
-import getProviderLogoName from "../../utils/getProviderLogoName";
 
 interface ProviderLogoProps {
   imageUrl?: string;
-  providerType: string;
   providerName: string;
   height?: string;
   width?: string;
@@ -15,7 +13,6 @@ const PIDMR_API = import.meta.env.VITE_PIDMR_API;
 
 const ProviderLogo = ({
   imageUrl,
-  providerType,
   providerName,
   height = "28px",
   width = "28px",
@@ -31,15 +28,11 @@ const ProviderLogo = ({
     }
   }, [imageUrl]);
 
-  console.log("providerType:", providerType);
-  console.log("providerName:", providerName);
-  console.log("imageUrl:", imageUrl);
-
   // If no custom logo or if there was an error loading it, use the default icon
   if (useDefaultIcon) {
     return (
       <Icon
-        fileName={getProviderLogoName(providerType)}
+        fileName="logoPlaceholder.png"
         height={height}
         width={width}
         className={className}

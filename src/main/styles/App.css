@@ -370,12 +370,14 @@ footer a {
 }
 
 .dropzone-wrapper {
-  display: "flex";
-  justify-content: "center";
-  height: "150px";
-  padding: "1.25rem";
-  text-align: "center";
-  cursor: "pointer";
-  border: "2px dashed #cccccc";
-  border-radius: "0.5rem";
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+  padding: 1.25rem;
+  text-align: center;
+  cursor: pointer;
+  border: 2px dashed #ccc;
+  border-radius: 0.5rem;
 }
