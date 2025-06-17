@@ -212,7 +212,6 @@ footer a {
 .providers-box-container .headerblock .imgblock img {
   display: block;
   overflow: clip;
-  background-color: #495057;
   border: 1px solid #495057;
   border-radius: 50%;
 }
