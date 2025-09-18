@@ -70,7 +70,7 @@
   "releaseNotes": "https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/releases",
   "runtimePlatform": ["Web Browser", "Node.js"],
   "softwareRequirements": "Node.js, npm, Vite",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "developmentStatus": "active",
   "funding": "Funded by European Commission under grant number 101057264.",
   "issueTracker": "https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/issues"
