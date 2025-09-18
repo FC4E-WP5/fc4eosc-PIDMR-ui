@@ -1,14 +1,51 @@
 # Changelog
 
-All notable changes in FC4E-CAT-UI project are documented here
+All notable changes in FC4EOSC-PIDMR-UI project are documented here
 
-## [v1.4.0](https://github.com/FC4E-CAT/fc4e-cat-ui/releases/tag/v1.4.0) (2025-03-28)
+## [v1.5.0](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/releases/tag/v1.5.0) (2025-09-18)
+
+### Added:
+
+- [PIDMR-255] - Add provider logo upload functionality ([#98](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/98))
+- [PIDMR-215] - Codemeta UI ([#97](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/97))
+- [PIDMR-253] - Implement autofocus on PID input field ([#96](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/96))
+- [PIDMR-252] - Update field name from metadata_path to resource_path_in_metadata ([#95](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/95))
+- [PIDMR-252] - Add metadata_path field support to Provider form ([#94](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/94))
+- [PIDMR-243] - View page for a provider ([#93](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/93))
+- [PIDMR-248] - Update admin sidebar and navigation for role-based access control ([#92](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/92))
+- [PIDMR-248] - Create side navigation menu for admin pages ([#91](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/91))
+- [PIDMR-246] - Add Not Found page to handle non-existent routes ([#88](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/88))
+- [PIDMR-244] - Display error message when pid not found ([#87](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/87))
+- [PIDMR-242] - Update search functionality to include descriptions and examples ([#86](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/86))
+- [PIDMR-242] - Add functionality for search bar, add dynamic icon based on provider type ([#85](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/85))
+- [PIDMR-243] - Add PID detail component for viewing individual provider information ([#83](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/83))
+- [PIDMR-237] - Add no-results message for invalid search results ([#81](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/81))
+
+### Changed:
+
+- [PIDMR-257] - Refactor provider logo handling and add PID Type validation ([#99](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/99))
+- [PIDMR-249] - Refactor PIDs management table UI ([#90](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/90))
+- [PIDMR-241] - Update the view of supported PIDs ([#82](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/82))
+- [PIDMR-234] - Refactor PID search results UI for better display ([#80](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/80))
+- [PIDMR-234] - Refactor PID search results UI for better display ([#79](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/79))
+- [PIDMR-236] - Remove filtering to display all results for PIDs ([#78](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/78))
+- [PIDMR-234] - Refactor PID search results UI for better display ([#76](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/76))
+- [PIDMR-231] - Split App component into smaller components ([#75](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/75))
+- [PIDMR-230] - Refactor routing logic and extract route paths to constants ([#74](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/74))
+- [PIDMR-233] - Move keycloak.json to /src directory ([#73](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/73))
+- [PIDMR-232] - Restructure components into dedicated directories ([#72](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/72))
+
+### Fixed:
+
+- [PIDMR-235] - Fix linting warnings for prettier and stylelint ([#77](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/77))
+
+## [v1.4.0](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/releases/tag/v.1.4.0) (2025-03-28)
 
 ### Added:
 
 - PIDMR-277 Update ui to handle the new provider schema ([#64](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/64))
 
-## [v1.3.0](https://github.com/FC4E-CAT/fc4e-cat-ui/releases/tag/v1.3.0) (2024-12-19)
+## [v1.3.0](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/releases/tag/v1.3.0) (2024-12-19)
 
 ### Added:
 
@@ -34,7 +71,7 @@ All notable changes in FC4E-CAT-UI project are documented here
 
 - PIDMR-193 Fix pagination issue in supported pids ([#60](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/60))
 
-## [v1.2.0](https://github.com/FC4E-CAT/fc4e-cat-ui/releases/tag/v1.2.0) (2024-06-10)
+## [v1.2.0](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/releases/tag/v1.2.0) (2024-06-10)
 
 ### Added:
 
@@ -44,7 +81,7 @@ All notable changes in FC4E-CAT-UI project are documented here
 - PIDMR-167: Added a registration form for the new users ([#36](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/36), [#41](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/41))
 - PIDMR-171: Added a role request management table ([#38](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/38), [#39](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/39), [#42](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/42))
 
-## [v1.1.0](https://github.com/FC4E-CAT/fc4e-cat-ui/releases/tag/v1.1.0) (2024-04-29)
+## [v1.1.0](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/releases/tag/v1.1.0) (2024-04-29)
 
 ### Added
 
@@ -54,7 +91,7 @@ All notable changes in FC4E-CAT-UI project are documented here
 
 - PIDMR-137 Fix created by field in managed pids ([#30](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/30))
 
-## [v1.0.0](https://github.com/FC4E-CAT/fc4e-cat-ui/releases/tag/v1.0.0) (2024-01-24)
+## [v1.0.0](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/releases/tag/V1.0.0) (2024-01-24)
 
 ### Added
 
