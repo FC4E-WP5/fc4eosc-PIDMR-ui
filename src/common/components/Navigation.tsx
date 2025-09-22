@@ -1,7 +1,7 @@
 import { Dropdown, Nav, Navbar } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import logo from "./assets/logo.svg";
-import { AuthContext } from "./auth";
+import logo from "@/assets/logo.svg";
+import { AuthContext } from "../../auth";
 import { useContext } from "react";
 import {
   FaCog,
@@ -29,6 +29,10 @@ function Navigation() {
   const hasRole = (role: string) => {
     return roles.includes(role);
   };
+
+  const isAdmin = hasRole("admin");
+  const isProviderAdmin = hasRole("provider_admin");
+  const isRegularUser = !isAdmin && !isProviderAdmin;
 
   return (
     <>
@@ -66,17 +70,19 @@ function Navigation() {
         )}
         {authenticated && (
           <>
-            <Dropdown>
+            <Dropdown align="end">
               <Dropdown.Toggle variant="primary" id="dropdown-basic">
                 <FaUser /> {trimUserid(userid)}
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
-                <Dropdown.Item as={Link} to="/managed-pids">
-                  <FaCog className="me-2" />
-                  Manage PIDs
-                </Dropdown.Item>
-                {hasRole("admin") ? (
+                {(isAdmin || isProviderAdmin) && (
+                  <Dropdown.Item as={Link} to="/managed-pids">
+                    <FaCog className="me-2" />
+                    Manage PIDs
+                  </Dropdown.Item>
+                )}
+                {isAdmin && (
                   <>
                     <Dropdown.Item as={Link} to="/users-table">
                       <FaUsers className="me-2" />
@@ -87,8 +93,14 @@ function Navigation() {
                       Role Requests
                     </Dropdown.Item>
                   </>
-                ) : null}
-                <hr />
+                )}
+                {isRegularUser && (
+                  <Dropdown.Item as={Link} to="/user-role">
+                    <FaUser className="me-2" />
+                    Role Promotion
+                  </Dropdown.Item>
+                )}
+                <hr className="my-2" />
                 <Dropdown.Item as={Link} to="/logout">
                   <FaSignOutAlt className="me-2" /> Logout
                 </Dropdown.Item>

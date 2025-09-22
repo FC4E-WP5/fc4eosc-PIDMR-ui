@@ -30,6 +30,9 @@ export type Provider = {
   status?: string;
   examples: string[];
   user_id: string | null;
+  validator: string | null;
+  resource_path_in_metadata?: MetadataPath[];
+  image_url_path?: string;
 };
 
 export type ResolutionMode = {
@@ -43,6 +46,11 @@ export type Endpoint = {
   provider: string;
 };
 
+export type MetadataPath = {
+  provider: string;
+  path: string;
+};
+
 export type ProviderInput = {
   type: string;
   name: string;
@@ -51,6 +59,9 @@ export type ProviderInput = {
   resolution_modes: ResolutionMode[];
   regexes: string[];
   examples: string[];
+  resource_path_in_metadata?: MetadataPath[];
+  image_base_64?: string;
+  image_url_path?: string;
 };
 
 export type RoleChangeRequest = {
@@ -73,4 +84,14 @@ export interface UserList {
   name: string;
   surname: string;
   email: string;
+}
+
+export interface PaginationProps {
+  isClientSide: boolean;
+  currentPage: number;
+  pageSize: number;
+  data: ApiResponse | null;
+  totalItems: number;
+  totalPages: number;
+  searchTerm: string;
 }

@@ -1,17 +1,18 @@
 import { Button, Col, Form, Row, Alert, Spinner } from "react-bootstrap";
 import { FaPlusCircle } from "react-icons/fa";
-import { AuthContext } from "./auth";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { PromotionRequestInfo } from "./InfoText";
-import { RoleChangeRequest } from "./types";
+import { AuthContext } from "../../auth";
+import { RoleChangeRequest } from "../../types";
+import { PromotionRequestInfo } from "../managed-pids/InfoText";
+import AdminLayout from "../../common/components/AdminLayout";
 
 // API endpoint declared in env variable
 const PIDMR_API = import.meta.env.VITE_PIDMR_API;
 const USER_ROLE_REQUEST_API_ROUTE = `${PIDMR_API}/v1/users/role-change-request`;
 
-function RequestRolePromotion() {
+function UserRole() {
   const navigate = useNavigate();
   const { keycloak } = useContext(AuthContext)!;
   const { userid } = useContext(AuthContext)!;
@@ -102,14 +103,11 @@ function RequestRolePromotion() {
         if (response.ok) {
           const requestData = await response.json();
           const userRequests = requestData.content;
-          // console.log("Requests:", requestData);
-          // console.log("userRequests:", userRequests[0].user_id);
 
           if (Array.isArray(userRequests)) {
             const userRequest = userRequests.find(
               (element: RoleChangeRequest) => element.user_id === userid,
             );
-            console.log("userRequest:", userRequest);
             if (userRequest) {
               setPendingRequest(userRequest);
             } else {
@@ -139,142 +137,146 @@ function RequestRolePromotion() {
 
   if (pendingRequest) {
     return (
-      <div className="mt-4">
-        <h5>
-          <FaPlusCircle className="me-2" />
-          Role Promotion Request
-        </h5>
-        <Alert variant="info">
-          <span>
-            You have already submitted a request with status:
-            <strong> {pendingRequest.status} </strong>
-          </span>
-          <br />
-          {pendingRequest.status === "REJECTED" ? (
-            <div>
-              Please contact the following email{" "}
-              <strong>pidmr@einfra.grnet.gr</strong> for more information!
-            </div>
-          ) : (
-            ""
-          )}
-        </Alert>
-      </div>
+      <AdminLayout>
+        <div className="mt-4">
+          <h5>
+            <FaPlusCircle className="me-2" />
+            Role Promotion Request
+          </h5>
+          <Alert className="mt-4" variant="info">
+            <span>
+              You have already submitted a request with status:
+              <strong> {pendingRequest.status} </strong>
+            </span>
+            <br />
+            {pendingRequest.status === "REJECTED" ? (
+              <div>
+                Please contact the following email{" "}
+                <strong>pidmr@einfra.grnet.gr</strong> for more information!
+              </div>
+            ) : (
+              ""
+            )}
+          </Alert>
+        </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="mt-4">
-      <h5>
-        <FaPlusCircle className="me-2" />
-        Request Role Promotion
-      </h5>
-      {showThankYou ? (
-        <Alert variant="success">
-          Thank you for submitting your role promotion request!
-        </Alert>
-      ) : (
-        <Form className="mt-4">
-          <Row className="mb-3">
-            <Form.Group as={Col} controlId="formUserName">
-              <Form.Label>
-                {PromotionRequestInfo.name.label}
-                <span className="info-icon">
-                  {" "}
-                  i
-                  <span className="info-text">
-                    {PromotionRequestInfo.name.info}
+    <AdminLayout>
+      <div className="mt-4">
+        <h5>
+          <FaPlusCircle className="me-2" />
+          Request Role Promotion
+        </h5>
+        {showThankYou ? (
+          <Alert variant="success">
+            Thank you for submitting your role promotion request!
+          </Alert>
+        ) : (
+          <Form className="mt-4">
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="formUserName">
+                <Form.Label>
+                  {PromotionRequestInfo.name.label}
+                  <span className="info-icon">
+                    {" "}
+                    i
+                    <span className="info-text">
+                      {PromotionRequestInfo.name.info}
+                    </span>
                   </span>
-                </span>
-              </Form.Label>
-              <Form.Control
-                type="text"
-                name="name"
-                placeholder="Enter your name"
-                onChange={handleInputChange}
-                value={formData.name}
-              />
-            </Form.Group>
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="name"
+                  placeholder="Enter your name"
+                  onChange={handleInputChange}
+                  value={formData.name}
+                />
+              </Form.Group>
 
-            <Form.Group as={Col} controlId="formUserSurname">
+              <Form.Group as={Col} controlId="formUserSurname">
+                <Form.Label>
+                  {PromotionRequestInfo.surname.label}
+                  <span className="info-icon">
+                    {" "}
+                    i
+                    <span className="info-text">
+                      {PromotionRequestInfo.surname.info}
+                    </span>
+                  </span>
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="surname"
+                  placeholder="Enter your surname"
+                  onChange={handleInputChange}
+                  value={formData.surname}
+                />
+              </Form.Group>
+            </Row>
+            <Form.Group className="mb-3" controlId="formUserEmail">
               <Form.Label>
-                {PromotionRequestInfo.surname.label}
+                {PromotionRequestInfo.email.label}
                 <span className="info-icon">
                   {" "}
                   i
                   <span className="info-text">
-                    {PromotionRequestInfo.surname.info}
+                    {PromotionRequestInfo.email.info}
                   </span>
                 </span>
               </Form.Label>
               <Form.Control
-                type="text"
-                name="surname"
-                placeholder="Enter your surname"
+                type="email"
+                name="email"
+                placeholder="Enter your email"
                 onChange={handleInputChange}
-                value={formData.surname}
+                value={formData.email}
               />
             </Form.Group>
-          </Row>
-          <Form.Group className="mb-3" controlId="formUserEmail">
-            <Form.Label>
-              {PromotionRequestInfo.email.label}
-              <span className="info-icon">
-                {" "}
-                i
-                <span className="info-text">
-                  {PromotionRequestInfo.email.info}
+            <Form.Group className="mb-3" controlId="formUserRole">
+              <Form.Control
+                hidden
+                name="role"
+                onChange={handleInputChange}
+                value={formData.role}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formUserDescription">
+              <Form.Label>
+                {PromotionRequestInfo.description.label}
+                <span className="info-icon">
+                  {" "}
+                  i
+                  <span className="info-text">
+                    {PromotionRequestInfo.description.info}
+                  </span>
                 </span>
-              </span>
-            </Form.Label>
-            <Form.Control
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              onChange={handleInputChange}
-              value={formData.email}
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formUserRole">
-            <Form.Control
-              hidden
-              name="role"
-              onChange={handleInputChange}
-              value={formData.role}
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formUserDescription">
-            <Form.Label>
-              {PromotionRequestInfo.description.label}
-              <span className="info-icon">
-                {" "}
-                i
-                <span className="info-text">
-                  {PromotionRequestInfo.description.info}
-                </span>
-              </span>
-            </Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              name="description"
-              placeholder="Enter a short description"
-              onChange={handleInputChange}
-              value={formData.description}
-            />
-          </Form.Group>
-          <Button onClick={handleSubmit}>Submit</Button>
-          <Button
-            variant="secondary"
-            className="ms-2"
-            onClick={() => navigate("/logout")}
-          >
-            Cancel
-          </Button>
-        </Form>
-      )}
-    </div>
+              </Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="description"
+                placeholder="Enter a short description"
+                onChange={handleInputChange}
+                value={formData.description}
+              />
+            </Form.Group>
+            <Button onClick={handleSubmit}>Submit</Button>
+            <Button
+              variant="secondary"
+              className="ms-2"
+              onClick={() => navigate("/logout")}
+            >
+              Cancel
+            </Button>
+          </Form>
+        )}
+      </div>
+    </AdminLayout>
   );
 }
 
-export default RequestRolePromotion;
+export default UserRole;

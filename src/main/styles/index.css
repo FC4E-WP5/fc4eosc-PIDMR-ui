@@ -11,6 +11,12 @@ code {
     monospace;
 }
 
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .info-icon {
   position: relative;
   display: inline-block;
@@ -45,4 +51,18 @@ code {
 .info-icon:hover .info-text {
   visibility: visible;
   opacity: 1;
+}
+
+.bg-grey-light {
+  background-color: #f8f9fe;
+}
+
+footer ul.legal {
+  padding: 0;
+  list-style: none;
+}
+
+footer ul.legal li {
+  display: inline;
+  margin-right: 10px; /* optional, adds some spacing between list items */
 }

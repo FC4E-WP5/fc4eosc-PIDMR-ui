@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useContext, useCallback } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import { Button, Form } from "react-bootstrap";
-import { RoleChangeRequest } from "./types";
+import { Form } from "react-bootstrap";
+import { RoleChangeRequest } from "../../types";
 import { FaUsersCog } from "react-icons/fa";
-import { AuthContext } from "./auth";
+import { AuthContext } from "../../auth";
 import { toast } from "react-hot-toast";
+import AdminLayout from "../../common/components/AdminLayout";
 
 // API endpoint declared in env variable
 const PIDMR_API = import.meta.env.VITE_PIDMR_API;
 const PROMOTE_USER_ROLE_API_ROUTE = `${PIDMR_API}/v1/admin/users/role-change-requests`;
 
-const RoleChangeRequestsTable: React.FC = () => {
+const UserRoleRequests: React.FC = () => {
   const customStyles = {
     headCells: {
       style: {
@@ -232,11 +233,6 @@ const RoleChangeRequestsTable: React.FC = () => {
     },
   ];
 
-  const handleClear = () => {
-    setFilterText("");
-    setFilterStatus("");
-  };
-
   const filteredRequests = requests.filter((request) => {
     const matchesText =
       request.name.toLowerCase().includes(filterText.toLowerCase()) ||
@@ -253,67 +249,64 @@ const RoleChangeRequestsTable: React.FC = () => {
   });
 
   return (
-    <div className="mt-4 mb-4">
-      <h5>
-        <FaUsersCog className="me-2" />
-        Role Change Requests
-      </h5>
-      <div className="row mb-3 mt-3">
-        <div className="col-4">
-          <Form.Select
-            id="contactSelection"
-            name="formSelectContact"
-            aria-label="Contact Selection"
-            onChange={(e) => setFilterStatus(e.target.value)}
-            value={filterStatus}
-          >
-            <option id="All" value="">
-              Select status
-            </option>
-            <option key="approved" value="APPROVED">
-              APPROVED
-            </option>
-            <option key="pending" value="PENDING">
-              PENDING
-            </option>
-            <option key="rejected" value="REJECTED">
-              REJECTED
-            </option>
-          </Form.Select>
+    <AdminLayout>
+      <div className="my-4">
+        <h5>
+          <FaUsersCog className="me-2 mb-1" size="24px" />
+          Role Change Requests
+        </h5>
+        <p className="text-muted w-75 my-3">
+          Manage user permission requests. Review and approve or reject users
+          requesting provider administrator privileges.
+        </p>
+        <div className="row mb-3 mt-3">
+          <div className="col-4">
+            <Form.Select
+              id="contactSelection"
+              name="formSelectContact"
+              aria-label="Contact Selection"
+              onChange={(e) => setFilterStatus(e.target.value)}
+              value={filterStatus}
+            >
+              <option id="All" value="">
+                Select status
+              </option>
+              <option key="approved" value="APPROVED">
+                Approved
+              </option>
+              <option key="pending" value="PENDING">
+                Pending
+              </option>
+              <option key="rejected" value="REJECTED">
+                Rejected
+              </option>
+            </Form.Select>
+          </div>
+          <div className="col-6">
+            <Form.Control
+              id="searchField"
+              name="filterText"
+              aria-label="Input for searching the list"
+              placeholder="Search ..."
+              value={filterText}
+              aria-describedby="button-addon2"
+              onChange={(e) => setFilterText(e.target.value)}
+            />
+          </div>
         </div>
-        <div className="col-7">
-          <Form.Control
-            id="searchField"
-            name="filterText"
-            aria-label="Input for searching the list"
-            placeholder="Search ..."
-            value={filterText}
-            aria-describedby="button-addon2"
-            onChange={(e) => setFilterText(e.target.value)}
+        <div className="mt-4">
+          <DataTable
+            columns={columns}
+            data={filteredRequests}
+            defaultSortFieldId={1}
+            theme="default"
+            customStyles={customStyles}
+            pagination
           />
         </div>
-        <div className="col-1">
-          <Button
-            variant="outline-primary"
-            id="button-addon2"
-            onClick={handleClear}
-          >
-            Clear
-          </Button>
-        </div>
       </div>
-      <div className="mt-4">
-        <DataTable
-          columns={columns}
-          data={filteredRequests}
-          defaultSortFieldId={1}
-          theme="default"
-          customStyles={customStyles}
-          pagination
-        />
-      </div>
-    </div>
+    </AdminLayout>
   );
 };
 
-export default RoleChangeRequestsTable;
+export default UserRoleRequests;

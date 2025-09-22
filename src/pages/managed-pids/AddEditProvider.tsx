@@ -1,11 +1,19 @@
 import { Badge, Button, Col, Form, Row } from "react-bootstrap";
-import { FaEdit, FaInfoCircle, FaPlusCircle } from "react-icons/fa";
-import { AuthContext } from "./auth";
-import { useContext, useEffect, useState } from "react";
+import {
+  FaEdit,
+  FaInfoCircle,
+  FaPlusCircle,
+  FaUpload,
+  FaTrash,
+} from "react-icons/fa";
+import { AuthContext } from "../../auth";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Endpoint, Provider, ProviderInput } from "./types";
+import { Endpoint, Provider, ProviderInput } from "../../types";
 import { toast } from "react-hot-toast";
 import { AddEditProviderInfo } from "./InfoText";
+import { useDropzone } from "react-dropzone";
+import ProviderLogo from "../../common/components/ProviderLogo";
 
 // API endpoint declared in env variable
 const PIDMR_API = import.meta.env.VITE_PIDMR_API;
@@ -26,7 +34,17 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
     relies_on_dois: false,
     resolution_modes: [],
     regexes: [""],
+    resource_path_in_metadata: [
+      {
+        provider: "",
+        path: "",
+      },
+    ],
+    image_base_64: "",
+    image_url_path: "",
   });
+
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleRegexChange = (index: number, value: string) => {
     const updatedInfo = { ...info };
@@ -43,6 +61,42 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
   const handleRegexAdd = () => {
     const updatedRegexes = [...info.regexes, ""];
     setInfo({ ...info, regexes: updatedRegexes });
+  };
+
+  const handleMetadataPathChange = (
+    index: number,
+    field: "provider" | "path",
+    value: string,
+  ) => {
+    const updatedInfo = { ...info };
+    if (updatedInfo.resource_path_in_metadata) {
+      updatedInfo.resource_path_in_metadata[index] = {
+        ...updatedInfo.resource_path_in_metadata[index],
+        [field]: value,
+      };
+      setInfo(updatedInfo);
+    }
+  };
+
+  const handleMetadataPathRemove = (index: number) => {
+    const updatedInfo = { ...info };
+    if (updatedInfo.resource_path_in_metadata) {
+      updatedInfo.resource_path_in_metadata.splice(index, 1);
+      setInfo(updatedInfo);
+    }
+  };
+
+  const handleResourcePath = () => {
+    const updatedInfo = { ...info };
+    if (updatedInfo.resource_path_in_metadata) {
+      updatedInfo.resource_path_in_metadata = [
+        ...updatedInfo.resource_path_in_metadata,
+        { provider: "", path: "" },
+      ];
+    } else {
+      updatedInfo.resource_path_in_metadata = [{ provider: "", path: "" }];
+    }
+    setInfo(updatedInfo);
   };
 
   const handleExampleChange = (index: number, value: string) => {
@@ -79,6 +133,7 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
 
           if (response.ok) {
             const responseData = (await response.json()) as Provider;
+
             const loadedInfo = {
               ...responseData,
               resolution_modes: responseData.resolution_modes.map((item) => ({
@@ -87,8 +142,12 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
                 endpoints: item.endpoints || [],
               })),
             };
-            console.log(loadedInfo);
             setInfo(loadedInfo);
+
+            // Set image preview if the provider has an image URL
+            if (loadedInfo?.image_url_path) {
+              setImagePreview(loadedInfo.image_url_path);
+            }
           }
         } catch (error: unknown) {
           toast.error("Error while trying to add new provider!");
@@ -104,7 +163,18 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
 
   const handleSubmit = async () => {
     if (keycloak) {
-      console.log(info);
+      const sumbittedData = { ...info };
+
+      // Filter out resource_path_in_metadata entries with empty fields
+      if (
+        sumbittedData.resource_path_in_metadata &&
+        sumbittedData.resource_path_in_metadata.length > 0
+      ) {
+        sumbittedData.resource_path_in_metadata =
+          sumbittedData.resource_path_in_metadata.filter(
+            (item) => item.provider.trim() !== "" && item.path.trim() !== "",
+          );
+      }
 
       const method = editMode ? "PATCH" : "POST";
       const url = editMode
@@ -117,7 +187,7 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${keycloak.token}`,
           },
-          body: JSON.stringify(info),
+          body: JSON.stringify(sumbittedData),
         });
 
         if (response.ok) {
@@ -133,7 +203,11 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
                   editMode ? "update" : "add new"
                 } Provider:`}</strong>
                 <br />
-                <span>{data.message}</span>
+                <span>
+                  {info.type?.includes("/")
+                    ? "The '/' character is not allowed in the PID Type field."
+                    : data.message}
+                </span>
               </div>,
             );
           });
@@ -213,6 +287,48 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
     setInfo({ ...info, resolution_modes: updatedModes });
   };
 
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const file = acceptedFiles[0];
+
+      if (file.type !== "image/png" && file.type !== "image/jpeg") {
+        toast.error("Only PNG and JPEG image formats are supported");
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Image size must be less than 5MB");
+        return;
+      }
+
+      // Read file as base64
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          const base64String = event.target.result as string;
+          setInfo({ ...info, image_base_64: base64String });
+          setImagePreview(base64String);
+        }
+      };
+      reader.readAsDataURL(file);
+    },
+    [info],
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      "image/png": [".png"],
+      "image/jpeg": [".jpg", ".jpeg"],
+    },
+    maxFiles: 1,
+  });
+
+  const handleRemoveImage = () => {
+    setInfo({ ...info, image_base_64: "", image_url_path: "" });
+    setImagePreview(null);
+  };
+
   return (
     <div className="mt-4">
       {editMode == 1 ? (
@@ -241,7 +357,7 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
       <Form className="mt-4">
         <fieldset disabled={editMode === 2}>
           <Row className="mb-3">
-            <Form.Group as={Col} controlId="formProviderPidType">
+            <Form.Group as={Col} controlId="formProviderType">
               <Form.Label>PID Type</Form.Label>
               <span className="info-icon">
                 {" "}
@@ -251,9 +367,9 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
                 </span>
               </span>
               <Form.Control
-                type="text"
                 placeholder="Enter PID Type"
                 onChange={(e) => setInfo({ ...info, type: e.target.value })}
+                type="text"
                 value={info.type}
               />
             </Form.Group>
@@ -436,6 +552,133 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
               </div>
             ))}
           </Form.Group>
+
+          {((info.resource_path_in_metadata?.length !== 0 && editMode === 2) ||
+            editMode !== 2) && (
+            <Form.Group
+              className="d-flex flex-column mb-3 mt-4"
+              controlId="formProviderMetadataPath"
+            >
+              <div>
+                <Form.Label>Resource Path in Metadata</Form.Label>
+                <span className="info-icon">
+                  {" "}
+                  i
+                  <span className="info-text">
+                    {AddEditProviderInfo.resource_path_in_metadata.info}
+                  </span>
+                </span>
+              </div>
+
+              {info.resource_path_in_metadata &&
+                info.resource_path_in_metadata.map((metadataItem, index) => (
+                  <Row key={`metadata-${index}`} className="mb-1">
+                    <Col>
+                      <Form.Control
+                        type="text"
+                        value={metadataItem.provider}
+                        onChange={(e) =>
+                          handleMetadataPathChange(
+                            index,
+                            "provider",
+                            e.target.value,
+                          )
+                        }
+                        placeholder="Provider name"
+                      />
+                    </Col>
+                    <Col>
+                      <Form.Control
+                        type="text"
+                        value={metadataItem.path}
+                        onChange={(e) =>
+                          handleMetadataPathChange(
+                            index,
+                            "path",
+                            e.target.value,
+                          )
+                        }
+                        placeholder="Path template"
+                      />
+                    </Col>
+                    <Col xs="auto">
+                      <Button
+                        variant="outline-danger"
+                        onClick={() => handleMetadataPathRemove(index)}
+                      >
+                        Delete
+                      </Button>
+                    </Col>
+                  </Row>
+                ))}
+              <Button
+                size="sm"
+                onClick={handleResourcePath}
+                variant="outline-success"
+                style={{ width: "fit-content" }}
+              >
+                Add Resource Path
+              </Button>
+            </Form.Group>
+          )}
+
+          <Form.Group className="mb-3 mt-4" controlId="formProviderLogo">
+            <Form.Label>Provider Logo</Form.Label>
+            <span className="info-icon">
+              {" "}
+              i
+              <span className="info-text">{AddEditProviderInfo.logo.info}</span>
+            </span>
+            <div className="mb-3">
+              {imagePreview || info.image_url_path || editMode === 2 ? (
+                <div className="text-center">
+                  <ProviderLogo
+                    imageUrl={
+                      info.image_url_path ||
+                      imagePreview ||
+                      (editMode !== 1 && info.type) ||
+                      ""
+                    }
+                    providerName={info.name}
+                    height="150px"
+                    width="auto"
+                  />
+                </div>
+              ) : (
+                <div className="dropzone-wrapper" {...getRootProps()}>
+                  <input {...getInputProps()} />
+                  {isDragActive ? (
+                    <p style={{ margin: "auto" }}>Drop the file here...</p>
+                  ) : (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <FaUpload size={24} className="mb-2 opacity-50" />
+                      <span>
+                        Drag & drop a logo here, or click to select (PNG/JPEG,
+                        Max file size 5MB)
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            <Button
+              disabled={!imagePreview && !info.image_url_path}
+              variant="outline-danger"
+              size="sm"
+              onClick={handleRemoveImage}
+              className="d-block mx-auto mt-1"
+            >
+              <FaTrash /> Remove Image
+            </Button>
+          </Form.Group>
+
           <Form.Group className="mb-3 mt-4" controlId="formProviderExamples">
             <Form.Label>PID Examples</Form.Label>
             <span className="info-icon">
@@ -481,14 +724,16 @@ function AddEditProvider({ editMode = 0 }: { editMode?: number }) {
             </Button>
           </Form.Group>
         </fieldset>
-        {editMode !== 2 && (
-          <>
-            <Button onClick={handleSubmit}>Submit</Button>{" "}
-          </>
-        )}
-        <Link className="btn btn-secondary ms-2" to="/managed-pids">
-          {editMode === 2 ? "Back" : "Cancel"}
-        </Link>
+        <div className="mb-5 mt-3">
+          {editMode !== 2 && (
+            <>
+              <Button onClick={handleSubmit}>Submit</Button>{" "}
+            </>
+          )}
+          <Link className="btn btn-secondary ms-2" to="/managed-pids">
+            {editMode === 2 ? "Back" : "Cancel"}
+          </Link>
+        </div>
       </Form>
     </div>
   );
