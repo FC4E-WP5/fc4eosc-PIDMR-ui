@@ -2,6 +2,9 @@
 
 All notable changes in FC4EOSC-PIDMR-UI project are documented here
 
+## [v1.5.1](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/releases/tag/v1.5.1) (2026-07-09)
+- PIDMR-266 bump keycloak-js to 26.2.0 ([#103](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/pull/103))
+
 ## [v1.5.0](https://github.com/FC4E-WP5/fc4eosc-PIDMR-ui/releases/tag/v1.5.0) (2025-09-18)
 
 ### Added:
